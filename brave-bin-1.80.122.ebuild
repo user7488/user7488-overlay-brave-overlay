@@ -6,10 +6,10 @@ EAPI=7
 BRAVE_PN="${PN/-bin/}"
 
 CHROMIUM_LANGS="
-	af am ar az bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr 
-	gu he hi hr hu id it ja ka km kn ko lt lv mk ml mn mr ms my nb nl pl 
-	pt-BR pt-PT ro ru si sk sl sq sr sr-latin sv sw ta te th tr uk ur uz vi 
-	zh-CN zh-TW
+    af am ar az bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr 
+    gu he hi hr hu id it ja ka km kn ko lt lv mk ml mn mr ms my nb nl pl 
+    pt-BR pt-PT ro ru si sk sl sq sr sr-latin sv sw ta te th tr uk ur uz vi 
+    zh-CN zh-TW
 "
 
 inherit chromium-2 xdg-utils desktop
@@ -26,59 +26,59 @@ IUSE="keyring"
 # gconf is deprecated.
 # DEPEND="gnome-base/gconf:2"
 RDEPEND="
-	${DEPEND}
-	dev-libs/libpthread-stubs
-	x11-libs/libxcb
-	x11-libs/libXcomposite
-	x11-libs/libXcursor
-	x11-libs/libXdamage
-	x11-libs/libXext
-	x11-libs/libXfixes
-	x11-libs/libXi
-	x11-libs/libXrender
-	x11-libs/libXtst
-	x11-libs/libxshmfence
-	x11-libs/libXxf86vm
-	x11-libs/libXScrnSaver
-	x11-libs/libXrandr
-	x11-libs/libXau
-	x11-libs/libXdmcp
-	x11-libs/libXinerama
-	x11-libs/libxkbcommon
-	dev-libs/glib
-	dev-libs/nss
-	dev-libs/nspr
-	net-print/cups
-	sys-apps/dbus
-	dev-libs/expat
-	media-libs/alsa-lib
-	x11-libs/pango
-	x11-libs/cairo
-	dev-libs/gobject-introspection
-	dev-libs/atk
-	app-accessibility/at-spi2-core
-	app-accessibility/at-spi2-atk
-	x11-libs/gtk+:3
-	x11-libs/gdk-pixbuf
-	dev-libs/libffi
-	dev-libs/libpcre
-	net-libs/gnutls
-	sys-libs/zlib
-	dev-libs/fribidi
-	media-libs/harfbuzz
-	media-libs/fontconfig
-	media-libs/freetype
-	x11-libs/pixman
-	>=media-libs/libpng-1.6.34
-	media-libs/libepoxy
-	dev-libs/libbsd
-	dev-libs/libunistring
-	dev-libs/libtasn1
-	dev-libs/nettle
-	dev-libs/gmp
-	net-dns/libidn2
-	media-gfx/graphite2
-	app-arch/bzip2
+    ${DEPEND}
+    dev-libs/libpthread-stubs
+    x11-libs/libxcb
+    x11-libs/libXcomposite
+    x11-libs/libXcursor
+    x11-libs/libXdamage
+    x11-libs/libXext
+    x11-libs/libXfixes
+    x11-libs/libXi
+    x11-libs/libXrender
+    x11-libs/libXtst
+    x11-libs/libxshmfence
+    x11-libs/libXxf86vm
+    x11-libs/libXScrnSaver
+    x11-libs/libXrandr
+    x11-libs/libXau
+    x11-libs/libXdmcp
+    x11-libs/libXinerama
+    x11-libs/libxkbcommon
+    dev-libs/glib
+    dev-libs/nss
+    dev-libs/nspr
+    net-print/cups
+    sys-apps/dbus
+    dev-libs/expat
+    media-libs/alsa-lib
+    x11-libs/pango
+    x11-libs/cairo
+    dev-libs/gobject-introspection
+    dev-libs/atk
+    app-accessibility/at-spi2-core
+    app-accessibility/at-spi2-atk
+    x11-libs/gtk+:3
+    x11-libs/gdk-pixbuf
+    dev-libs/libffi
+    dev-libs/libpcre
+    net-libs/gnutls
+    sys-libs/zlib
+    dev-libs/fribidi
+    media-libs/harfbuzz
+    media-libs/fontconfig
+    media-libs/freetype
+    x11-libs/pixman
+    >=media-libs/libpng-1.6.34
+    media-libs/libepoxy
+    dev-libs/libbsd
+    dev-libs/libunistring
+    dev-libs/libtasn1
+    dev-libs/nettle
+    dev-libs/gmp
+    net-dns/libidn2
+    media-gfx/graphite2
+    app-arch/bzip2
 "
 
 QA_PREBUILT="*"
@@ -86,51 +86,56 @@ QA_PREBUILT="*"
 S=${WORKDIR}
 
 src_prepare() {
-	pushd "${S}/locales" > /dev/null || die
-		chromium_remove_language_paks
-	popd > /dev/null || die
+    pushd "${S}/locales" > /dev/null || die
+        chromium_remove_language_paks
+    popd > /dev/null || die
 
-	default
+    default
 }
 
 src_install() (
-	shopt -s extglob
+    shopt -s extglob
 
-		declare BRAVE_HOME=/opt/${BRAVE_PN}
+        declare BRAVE_HOME=/opt/${BRAVE_PN}
 
-		dodir ${BRAVE_HOME%/*}
+        dodir ${BRAVE_HOME%/*}
 
-		insinto ${BRAVE_HOME}
-			doins -r *
+        insinto ${BRAVE_HOME}
+            doins -r *
     # Brave has a bug in 1.27.105 where it needs crashpad_handler chmodded
     # Delete crashpad_handler when https://github.com/brave/brave-browser/issues/16985 is resolved.
-			exeinto ${BRAVE_HOME}
-				doexe brave chrome_crashpad_handler
+            exeinto ${BRAVE_HOME}
+                doexe brave chrome_crashpad_handler
 
-		dosym ${BRAVE_HOME}/brave /usr/bin/${PN} || die
+        dosym ${BRAVE_HOME}/brave /usr/bin/${PN} || die
 
-	# Install Icons for Brave. 
-		newicon "${FILESDIR}/braveAbout.png" "${PN}.png" || die
-		newicon -s 128 "${FILESDIR}/braveAbout.png" "${PN}.png" || die
+    # Install Icons for Brave using bundled product logos
+        local size
+        for size in 16 24 32 48 64 128 256; do
+            if [[ -f "product_logo_${size}.png" ]]; then
+                newicon -s ${size} "product_logo_${size}.png" "${PN}.png" || die
+            fi
+        done
 
-	# install-xattr doesnt approve using domenu or doins from FILESDIR
-		cp "${FILESDIR}"/${PN}.desktop "${S}"
-		domenu "${S}"/${PN}.desktop
+    # install-xattr doesnt approve using domenu or doins from FILESDIR
+        cp "${FILESDIR}"/${PN}.desktop "${S}"
+        domenu "${S}"/${PN}.desktop
 )
 
 pkg_postinst() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
-	elog "If upgrading from 1.50.x release or earlier, note that Brave has changed the format of the"
-	elog "password file, and ALL YOUR OLD PASSWORDS WILL NOT WORK."
-	elog "YOUR BRAVE REWARDS WILL NOT WORK EITHER."
-	elog "The solution is to temporarily downgrade back to 1.50.x (legacy ebuild provided),"
-	elog "so you can export passwords from Brave's Password Manager."
-	elog "once you're back in a newer build, import passwords from inside Brave's Password Manager,"
-	elog "and select the file you saved."
+    xdg_desktop_database_update
+    xdg_mimeinfo_database_update
+    elog "If upgrading from 1.50.x release or earlier, note that Brave has changed the format of the"
+    elog "password file, and ALL YOUR OLD PASSWORDS WILL NOT WORK."
+    elog "YOUR BRAVE REWARDS WILL NOT WORK EITHER."
+    elog "The solution is to temporarily downgrade back to 1.50.x (legacy ebuild provided),"
+    elog "so you can export passwords from Brave's Password Manager."
+    elog "once you're back in a newer build, import passwords from inside Brave's Password Manager,"
+    elog "and select the file you saved."
 }
 
 pkg_postrm() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
+    xdg_desktop_database_update
+    xdg_mimeinfo_database_update
 }
+
